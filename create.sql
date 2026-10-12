@@ -1,0 +1,94 @@
+create schema library;
+set search_path to library;
+
+create table library.reader (
+reader_id  integer       not null primary key,
+name       varchar(255)  not null,
+gender     CHAR          not null,
+	constraint reader_gender_check
+	check (gender in ('М', 'Ж')),
+birth_date DATE			 not null
+);
+
+create table library.genre(
+genre_id 	integer 			 not null primary key,
+genre_name 	varchar(50)  		 not null
+	constraint genre_name_unique unique
+);
+
+CREATE TABLE library.publisher (
+    publisher_id    integer         NOT NULL PRIMARY KEY,
+    name            VARCHAR(255)    NOT NULL,
+    city            VARCHAR(100)    NOT NULL
+);
+
+CREATE TABLE library.librarian (
+    employee_id     integer         NOT NULL PRIMARY KEY,
+    full_name       VARCHAR(255)    NOT NULL
+);
+
+CREATE TABLE library.author (
+    author_id       integer         NOT NULL PRIMARY KEY,
+    full_name       VARCHAR(255)    NOT NULL
+        CONSTRAINT author_full_name_unique UNIQUE
+);
+
+CREATE TABLE library.publication (
+    publication_id      INTEGER       NOT NULL PRIMARY KEY,
+    title               VARCHAR(255)    NOT NULL,
+    year_of_publication INT             NOT NULL,
+    copies_count        INT             NOT NULL
+        CONSTRAINT publication_copies_check
+        CHECK (copies_count >= 0),
+    genre_id            INT             NOT NULL,
+    publisher_id        INT             NOT NULL,
+    author_id           INT             NOT NULL,   
+
+    CONSTRAINT fk_publication_genre
+        FOREIGN KEY (genre_id)
+        REFERENCES library.genre (genre_id)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE,
+
+    CONSTRAINT fk_publication_publisher
+        FOREIGN KEY (publisher_id)
+        REFERENCES library.publisher (publisher_id)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE,
+
+    CONSTRAINT fk_publication_author
+        FOREIGN KEY (author_id)
+        REFERENCES library.author (author_id)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE
+);
+
+CREATE TABLE library.form (
+    form_id                 BIGSERIAL   NOT NULL PRIMARY KEY,
+    issue_date              DATE        NOT NULL,
+    actual_return_date      DATE,
+    reader_id               INT         NOT NULL,
+    publication_id          INT         NOT NULL,
+    employee_id             INT,
+
+    CONSTRAINT fk_form_reader
+        FOREIGN KEY (reader_id)
+        REFERENCES library.reader (reader_id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    CONSTRAINT fk_form_publication
+        FOREIGN KEY (publication_id)
+        REFERENCES library.publication (publication_id)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE,
+
+    CONSTRAINT fk_form_librarian
+        FOREIGN KEY (employee_id)
+        REFERENCES library.librarian (employee_id)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE,
+
+    CONSTRAINT form_dates_check
+        CHECK (actual_return_date >= issue_date)
+);
