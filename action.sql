@@ -1,0 +1,74 @@
+SET search_path TO library;
+
+INSERT INTO library.reader (reader_id, name, gender, birth_date) VALUES
+(1, 'Иванов Иван Иванович',      'М', '1990-05-15'),
+(2, 'Марк Качан Аленен Парень',   'М', '2006-01-01'),
+(3, 'Алексей Петрович',  'М', '2000-01-30'),
+(4, 'Ольга Дмитриевна','Ж', '1978-07-08');
+
+
+INSERT INTO library.genre (genre_id, genre_name) VALUES
+(1, 'Фантастика'),
+(2, 'Техническая литература'),
+(3, 'Научная литература'),
+(4, 'Роман');
+
+
+INSERT INTO library.publisher (publisher_id, name, city) VALUES
+(1, 'Эксмо',            'Москва'),
+(2, 'Питер',            'Санкт-Петербург'),
+(3, 'АСТ',              'Москва'),
+(4, 'Альпина Паблишер', 'Москва');
+
+
+INSERT INTO library.librarian (employee_id, full_name) VALUES
+(1, 'Козлова Анна Викторовна'),
+(2, 'Морозов Дмитрий Олегович'),
+(3, 'Фёдорова Елена Сергеевна');
+
+INSERT INTO library.author (author_id, full_name) VALUES
+(1, 'Фрэнк Герберт'),
+(2, 'Франк Кодд '),
+(3, 'Стивен Хокинг'),
+(4, 'Лев Толстой'),
+(5, 'Джордж Оруэлл');
+
+INSERT INTO library.publication
+    (publication_id, title, year_of_publication, copies_count,
+     genre_id, publisher_id, author_id) VALUES
+(1, 'Дюна',                          				  1965, 5, 1, 1, 1),
+(2, 'Реляционная модель для управления базами данных',1990, 3, 2, 2, 2),
+(3, 'Краткая история времени',                        1988, 2, 3, 3, 3),
+(4, 'Война и мир',                                    1869, 4, 4, 3, 4),
+(5, '1984',                                           1949, 6, 1, 1, 5);
+
+INSERT INTO library.form
+    (issue_date, actual_return_date, reader_id, publication_id, employee_id) VALUES
+('2024-01-10', '2024-01-22', 1, 1, 1),
+('2024-02-05', NULL,         2, 2, 2),
+('2024-03-01', '2024-03-20', 3, 3, 1),
+('2024-03-15', NULL,         4, 4, 3),
+('2024-04-01', '2024-04-10', 1, 5, 2);
+
+UPDATE library.reader
+SET name = 'Иванов Иван Петрович'
+WHERE reader_id = 1;
+
+SELECT * FROM library.reader WHERE reader_id = 1;
+
+UPDATE library.genre
+SET genre_name = 'Научно-популярная литература'
+WHERE genre_id = 3;
+
+SELECT * FROM library.genre WHERE genre_id = 3;
+
+DELETE FROM library.form
+WHERE form_id = 5;
+
+SELECT * FROM library.form WHERE form_id = 5;
+
+DELETE FROM library.reader
+WHERE reader_id = 4;
+
+SELECT * FROM library.reader WHERE reader_id = 4;
+SELECT * FROM library.form WHERE reader_id = 4;
